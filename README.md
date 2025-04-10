@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digital Pilot Logbook
+
+A modern web application for pilots to track, manage, and analyze their flight hours and experience digitally. This is a work in progress, please keep a secure copy of your flights.
+
+## Features
+
+- **Digital Logbook**: Record and track all your flights in one place
+- **Dashboard**: Visualize your flying statistics and progress
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices (with PWA support in future version)
+- **Firebase Authentication**: Secure user accounts
+- **Cloud Storage**: All your data securely stored in Firestore
+- **Export Options**: Generate reports and export your logbook data (support in future version)
+
+## Tech Stack
+
+- Next.js 15
+- React 18
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- Firebase (Firestore & Authentication)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.0 or higher
+- npm or yarn
+- Firebase account
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/digital-pilot-logbook.git
+cd digital-pilot-logbook
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up your Firebase project:
+   - Create a new project in the [Firebase Console](https://console.firebase.google.com/)
+   - Enable Authentication with email/password provider
+   - Create a Firestore database
+   - Generate your Firebase configuration
+
+4. Create a `.env.local` file in the root directory with your Firebase configuration:
+
+```
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
+
+5. Run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Firebase Setup Guide
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Create a Firebase Project**:
+   - Go to the [Firebase Console](https://console.firebase.google.com/)
+   - Click "Add project" and follow the setup wizard
+   - Enable Google Analytics if desired
 
-## Learn More
+2. **Set up Authentication**:
+   - In your Firebase project, go to "Authentication"
+   - Click "Get started"
+   - Enable the Email/Password provider
+   - Optionally, set up additional providers like Google, Microsoft, etc.
 
-To learn more about Next.js, take a look at the following resources:
+3. **Create Firestore Database**:
+   - Go to "Firestore Database"
+   - Click "Create database"
+   - Choose production or test mode (you can change this later)
+   - Select a location for your database
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Get Firebase Configuration**:
+   - Go to Project Settings (gear icon)
+   - Scroll down to "Your apps" section
+   - Click the web app icon (</>) to register a new web app if you haven't already
+   - Copy the configuration object that appears
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+digital-pilot-logbook/
+├── app/                 # Next.js app directory
+│   ├── (auth)/          # Authentication pages
+│   └── ...
+├── components/          # React components
+│   ├── ui/              # shadcn UI components
+│   └── ...
+├── lib/                 # Utility functions
+│   ├── firebase.ts      # Firebase configuration
+│   └── ...
+├── schemes/               # TypeScript type definitions
+├── public/              # Static assets
+├── .env.local           # Environment variables
+└── ...
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No license has been decided for now as this is a very early work in progress.
+
+## Acknowledgments
+
+- [Next.js](https://nextjs.org/)
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Firebase](https://firebase.google.com/)
