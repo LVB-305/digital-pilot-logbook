@@ -7,7 +7,7 @@ import { ResetForm } from "@/components/auth/reset-form";
 export const metadata: Metadata = {
   title: "Reset Password",
   description: "Account password reset form.",
-}
+};
 
 export default function ResetPage() {
   return (
@@ -31,5 +31,5 @@ export default function ResetPage() {
         .
       </p>
     </div>
-  )
+  );
 }

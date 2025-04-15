@@ -45,6 +45,12 @@
 
 :root {
   --radius: 0.625rem;
+
+    /* Using your specified colors */
+  --color-dark: #0C101C;
+  --color-medium: #171E32;
+  --color-light: #242F50;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -112,11 +118,53 @@
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
+.container {
+  @apply mx-auto px-4 lg:px-8;
+}
+
+/* Custom gradient classes */
+.bg-app-gradient {
+  background: linear-gradient(to right, #0C101C 0%, #171E32 20%, #242F50 100%);
+}
+
+.bg-app-gradient-vertical {
+  background: linear-gradient(to bottom, #0C101C 0%, #171E32 20%, #242F50 100%);
+}
+
+/* For text with gradient */
+.text-app-gradient {
+  background: linear-gradient(to right, #0C101C 0%, #171E32 20%, #242F50 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .dark-blue {
+    color: #0C101C;
+  }
+  .medium-blue {
+    color: #171E32;
+  }
+  .light-blue {
+    color: #242F50;
+  }
+  .bg-dark-blue {
+    background-color: #0C101C;
+  }
+  .bg-medium-blue {
+    background-color: #171E32;
+  }
+  .bg-light-blue {
+    background-color: #242F50;
   }
 }

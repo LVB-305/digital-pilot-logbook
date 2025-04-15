@@ -5,16 +5,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { login } from "@/actions/login";
+import { login } from "@/actions/auth/login";
 
-import { LoginSchema } from "@/schemas/auth";
+import { LoginSchema } from "@/schemas/auth/auth";
 
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,102 +25,96 @@ import { FormError } from "@/components/auth/form-error";
 import { PasswordInput } from "@/components/auth/password-input";
 
 export const LoginForm = () => {
-    const [error, setError] = useState<string | undefined>("");
-    const [success, setSuccess] = useState<string | undefined>("");
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
+  const [error, setError] = useState<string | undefined>("");
+  const [success, setSuccess] = useState<string | undefined>("");
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-        },
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    setError("");
+    setSuccess("");
+
+    startTransition(() => {
+      login(values).then((data) => {
+        setError(data?.error);
+        setSuccess(data?.success);
+      });
     });
+  };
 
-    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        setError("");
-        setSuccess("");
-
-        startTransition(() => {
-            login(values)
-                .then((data) => {
-                    setError(data?.error);
-                    setSuccess(data?.success);
-                })
-        });
-    }
-
-    return (
-        <CardWrapper
-            header="Login"
-            headerLabel="Please enter your details below to continue"
-            backButtonLabel="Don't have an account?"
-            backButtonHref="/register"
-            showSocial
-        >
-            <Form {...form}> 
-                <form 
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
-                >
-                    <div className="space-y-4">
-                        <FormField 
-                            control={form.control}
-                            name="email"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input 
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="name@email.com"
-                                            type="email"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <div>
-                            <PasswordInput 
-                                name="password"
-                                placeholder="Password"
-                                disabled={isPending}
-                            />
-                            <Button
-                                size="sm"
-                                variant="link"
-                                asChild
-                                className="px-0 font-normal text-xs text-muted-foreground hover:text-primary"
-                            >
-                                <Link href="/reset-password">
-                                    Forgot password?
-                                </Link>
-                            </Button>
-                        </div>
-                    </div>
-                    <FormError message={error} />
-                    <FormSucces message={success} />
-                    <Button
-                        disabled={isPending}
-                        type="submit"
-                        className="w-full"
-                    >
-                        Login
-                    </Button>
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">
-                                Or
-                            </span>
-                        </div>
-                    </div>
-                </form>
-            </Form>
-        </CardWrapper>
-    )
-}
+  return (
+    <CardWrapper
+      header="Login"
+      headerLabel="Please enter your details below to continue"
+      backButtonLabel="Don't have an account?"
+      backButtonHref="/register"
+      showSocial
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="name@email.com"
+                      type="email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div>
+              <PasswordInput
+                name="password"
+                placeholder="Password"
+                disabled={isPending}
+              />
+              <Button
+                size="sm"
+                variant="link"
+                asChild
+                className="px-0 font-normal text-xs text-muted-foreground hover:text-primary"
+              >
+                <Link href="/reset-password">Forgot password?</Link>
+              </Button>
+            </div>
+          </div>
+          <FormError message={error} />
+          <FormSucces message={success} />
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full cursor-pointer"
+          >
+            Login
+          </Button>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or
+              </span>
+            </div>
+          </div>
+        </form>
+      </Form>
+    </CardWrapper>
+  );
+};
