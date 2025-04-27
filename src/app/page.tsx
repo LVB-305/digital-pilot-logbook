@@ -27,7 +27,7 @@ export default function Home() {
                   <Link href="/register">
                     <Button
                       size="lg"
-                      className="bg-light-blue hover:bg-[#171E32] cursor-pointer"
+                      className="text-secondary-foreground bg-secondary hover:bg-secondary-hover cursor-pointer"
                     >
                       Get Started
                     </Button>

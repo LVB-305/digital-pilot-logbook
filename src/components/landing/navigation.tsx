@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { logout } from "@/actions/auth/logout";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client/client";
 
 interface UserMetadata {
   avatar_url?: string;
@@ -24,10 +25,7 @@ interface UserMetadata {
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {

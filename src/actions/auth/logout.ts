@@ -5,6 +5,6 @@ import { revalidatePath } from "next/cache";
 export const logout = async () => {
   const supabase = await createServerSupabaseClient();
   await supabase.auth.signOut();
-  revalidatePath("/", "layout");
-  return { success: true };
+  revalidatePath("/");
+  return { redirectTo: "/" };
 };

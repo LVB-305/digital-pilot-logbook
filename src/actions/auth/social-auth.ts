@@ -2,7 +2,6 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase/server/server";
 import { providerMap } from "@/lib/auth/constants/providers";
-import { redirect } from "next/navigation";
 
 export const socialAuthentication = async (
   service: keyof typeof providerMap

@@ -4,7 +4,7 @@ export default function Features() {
   return (
     <section
       id="features"
-      className="py-12 md:py-24 lg:py-32 bg-gray-50 dark:bg-gray-900/30"
+      className="py-12 md:py-24 lg:py-32 bg-gray-50 dark:bg-secondary/30"
     >
       <div className="container mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
         <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">

@@ -2,7 +2,6 @@
 import * as z from "zod";
 import { ResetSchema } from "@/schemas/auth/auth";
 import { createServerSupabaseClient } from "@/lib/supabase/server/server";
-import { redirect } from "next/navigation";
 
 export const resetPassword = async (values: z.infer<typeof ResetSchema>) => {
   const validatedFields = ResetSchema.safeParse(values);

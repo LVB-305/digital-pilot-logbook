@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Plane } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Footer() {
   return (

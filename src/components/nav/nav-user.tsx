@@ -31,7 +31,7 @@ export function NavUser({
           {/* <a href="/app/profile"> */}
           <Avatar className="h-8 w-8 rounded-lg">
             <AvatarImage src={user.avatar} alt={user.name} />
-            <AvatarFallback className="rounded-lg">
+            <AvatarFallback className="rounded-lg bg-sidebar-accent-foreground text-sidebar-primary-foreground">
               <User />
             </AvatarFallback>
           </Avatar>

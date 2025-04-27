@@ -2,8 +2,6 @@
 import * as z from "zod";
 import { RegisterSchema } from "@/schemas/auth/auth";
 import { createServerSupabaseClient } from "@/lib/supabase/server/server";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values);
