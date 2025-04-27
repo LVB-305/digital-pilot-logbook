@@ -10,7 +10,7 @@ export const publicRoutes = ["/"];
  * These routes do require authentication
  * @type {string[]}
  */
-export const privateRoutes = ["/logbook", "/flights"];
+export const privateRoutes = ["/app/flights"];
 
 /**
  * An array of routes used for authentication
@@ -28,6 +28,6 @@ export const authRoutes = [
  * Default redirect routes
  * @type {string}
  */
-export const DEFAULT_REDIRECT = "/flights";
+export const DEFAULT_REDIRECT = "/app/flights";
 
 export const SESSION_COOKIE_NAME = "user_session";

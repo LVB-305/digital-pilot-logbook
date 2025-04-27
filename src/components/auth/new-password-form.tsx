@@ -2,7 +2,7 @@
 import * as z from "zod";
 import { useState, useTransition, Suspense } from "react";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { NewPasswordSchema } from "@/schemas/auth/auth";
@@ -18,7 +18,7 @@ import { PasswordInput } from "@/components/auth/password-input";
 
 export const NewPasswordFormComponent = () => {
   const searchParams = useSearchParams();
-  const token = searchParams.get("oobCode");
+  const token = searchParams.get("code");
 
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
@@ -38,8 +38,16 @@ export const NewPasswordFormComponent = () => {
 
     startTransition(() => {
       newPassword(values, token).then((data) => {
-        setError(data?.error);
-        setSuccess(data?.success);
+        if (data?.error) {
+          setError(data.error);
+        }
+        if (data?.success) {
+          setSuccess(data.success);
+          // Add a small delay to ensure state updates complete
+          setTimeout(() => {
+            redirect(data.redirectTo);
+          }, 1000);
+        }
       });
     });
   };
@@ -67,7 +75,11 @@ export const NewPasswordFormComponent = () => {
           </div>
           <FormError message={error} />
           <FormSucces message={success} />
-          <Button disabled={isPending} type="submit" className="w-full">
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full cursor-pointer"
+          >
             Reset password
           </Button>
         </form>

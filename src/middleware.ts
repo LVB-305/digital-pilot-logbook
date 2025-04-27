@@ -1,34 +1,80 @@
-import { type NextRequest, NextResponse } from "next/server";
-
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 import {
-  DEFAULT_REDIRECT,
-  SESSION_COOKIE_NAME,
-  authRoutes,
+  publicRoutes,
   privateRoutes,
+  authRoutes,
+  DEFAULT_REDIRECT,
 } from "@/routes";
 
-export default async function middelware(request: NextRequest) {
-  const session = request.cookies.get(SESSION_COOKIE_NAME)?.value || "";
+export async function middleware(request: NextRequest) {
+  // Initialize Supabase client and handle session
+  let response = NextResponse.next({
+    request,
+  });
 
-  const isAuthRoute = authRoutes.includes(request.nextUrl.pathname);
-
-  // Redirect login page to default redirect if logged in
-  if (isAuthRoute) {
-    if (session) {
-      const absoluteURL = new URL(DEFAULT_REDIRECT, request.nextUrl);
-      return NextResponse.redirect(absoluteURL);
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          response = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
     }
-    return null;
+  );
+
+  // Get user session
+  const {
+    data: { user: session },
+  } = await supabase.auth.getUser();
+
+  // Helper function to check if the current path matches any route pattern
+  const pathStartsWith = (path: string, patterns: string[]) => {
+    return patterns.some((pattern) => path.startsWith(pattern));
+  };
+
+  const currentPath = request.nextUrl.pathname;
+
+  // Handle authentication routes
+  if (pathStartsWith(currentPath, authRoutes)) {
+    if (session) {
+      return NextResponse.redirect(new URL(DEFAULT_REDIRECT, request.url));
+    }
+    return response;
   }
 
-  // Redirect if no active session
-  if (!session && privateRoutes.includes(request.nextUrl.pathname)) {
-    const absoluteURL = new URL("/login", request.nextUrl.origin);
-    return NextResponse.redirect(absoluteURL.toString());
+  // Handle private routes
+  if (pathStartsWith(currentPath, privateRoutes) && !session) {
+    const redirectUrl = new URL("/login", request.url);
+    redirectUrl.searchParams.set("callbackUrl", currentPath);
+    return NextResponse.redirect(redirectUrl);
   }
+
+  return response;
 }
-
+// Matcher to exclude certain paths from middleware
 export const config = {
-  matcher:
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+  matcher: [
+    {
+      source:
+        "/((?!_next/static|_next/image|favicon.ico|favicons/.*\\.png|manifest.webmanifest|manifest.json|api/.*|fonts/.*|sitemap.xml|robots.txt|manifest.json|manifest.webmanifest|\\.well-known/.*).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
+  ],
 };

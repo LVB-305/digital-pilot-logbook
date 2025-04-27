@@ -1,9 +1,10 @@
 "use server";
-
-import { auth } from "@/lib/firebase";
-import { deleteSession } from "@/actions/auth/auth-actions";
+import { createServerSupabaseClient } from "@/lib/supabase/server/server";
+import { revalidatePath } from "next/cache";
 
 export const logout = async () => {
-  await auth.signOut();
-  await deleteSession();
+  const supabase = await createServerSupabaseClient();
+  await supabase.auth.signOut();
+  revalidatePath("/", "layout");
+  return { success: true };
 };

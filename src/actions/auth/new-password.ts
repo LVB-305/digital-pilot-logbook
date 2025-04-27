@@ -1,19 +1,16 @@
 "use server";
 import * as z from "zod";
 import { NewPasswordSchema } from "@/schemas/auth/auth";
-import { verifyPasswordResetCode } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { authAdmin } from "@/lib/firebaseAdmin";
-import { redirect } from "next/navigation";
+import { createServerSupabaseClient } from "@/lib/supabase/server/server";
 
 export const newPassword = async (
   values: z.infer<typeof NewPasswordSchema>,
   token?: string | null
 ) => {
-  console.log(token);
   if (!token) {
     return { error: "Missing token!" };
   }
+
   const validatedFields = NewPasswordSchema.safeParse(values);
 
   if (!validatedFields.success) {
@@ -22,32 +19,30 @@ export const newPassword = async (
 
   const { password } = validatedFields.data;
 
-  const userToken = await verifyPasswordResetCode(auth, token);
-
-  if (!userToken) {
-    return { error: "Invalid token!" };
-  }
-
-  console.log(userToken);
-
-  const user = await authAdmin.getUserByEmail(userToken);
-
-  if (!user) {
-    return { error: "Email does not exist!" };
-  }
-
   try {
-    // await updatePassword(user, password)
-    await authAdmin.updateUser(user.uid, {
+    const supabase = await createServerSupabaseClient();
+
+    // Verify token by attempting to exchange it for a session
+    const { error: verificationError } = await supabase.auth.verifyOtp({
+      token_hash: token,
+      type: "recovery",
+    });
+
+    if (verificationError) {
+      console.error("Token verification error:", verificationError);
+      return { error: "Invalid or expired password reset link" };
+    }
+
+    const { error } = await supabase.auth.updateUser({
       password: password,
     });
 
-    redirect("/logbook");
+    if (error) {
+      return { error: error.message };
+    }
 
-    return { success: "Password reset, redirecting..." };
-  } catch (e) {
-    let errorMessage = "Something went wrong.";
-
-    return { error: `${errorMessage}, ${e}` }; // Fallback to the Firebase error message
+    return { success: "Password updated successfully", redirectTo: "/login" };
+  } catch (error) {
+    return { error: "An unexpected error occurred" };
   }
 };

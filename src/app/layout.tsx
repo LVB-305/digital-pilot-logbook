@@ -4,7 +4,6 @@ import { settings } from "@/config/settings";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import "@/app/globals.css";
-import { AuthProvider } from "@/lib/auth/auth-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -68,17 +67,15 @@ export default function RootLayout({
       <body
         className={`${inter.className} flex min-h-screen flex-col bg-background text-primary`}
       >
-        <AuthProvider>
-          {settings.themeToggleEnabled ? (
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {children}
-            </ThemeProvider>
-          ) : (
-            <ThemeProvider attribute="class" forcedTheme="light" enableSystem>
-              {children}
-            </ThemeProvider>
-          )}
-        </AuthProvider>
+        {settings.themeToggleEnabled ? (
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+          </ThemeProvider>
+        ) : (
+          <ThemeProvider attribute="class" forcedTheme="light" enableSystem>
+            {children}
+          </ThemeProvider>
+        )}
       </body>
     </html>
   );

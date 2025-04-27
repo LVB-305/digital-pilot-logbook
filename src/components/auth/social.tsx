@@ -1,12 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { redirect } from "next/navigation";
-
-import { AuthProviders, providerMap } from "@/actions/auth/auth-providers";
-import { createSession } from "@/actions/auth/auth-actions";
-import { signInWithPopup } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { providerMap } from "@/lib/auth/constants/providers";
+import { socialAuthentication } from "@/actions/auth/social-auth";
 
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/auth/form-error";
@@ -18,27 +14,20 @@ export const Social = () => {
   const [error, setError] = useState<string | undefined>("");
 
   const socialAuth = async (service: keyof typeof providerMap) => {
-    const providerClass = new providerMap[service]();
-
-    const provider: AuthProviders = providerClass;
-
     try {
-      const result = await signInWithPopup(auth, provider);
+      setError("");
+      const data = await socialAuthentication(service);
 
-      if (!result || !result.user) {
-        setError("Google login failed");
+      if (data?.error) {
+        setError(data.error);
+        return;
       }
 
-      await createSession(result.user.uid);
-      redirect("/logbook");
-
-      return result.user.uid;
-    } catch (e) {
-      let errorMessage;
-      if (e instanceof Error) {
-        errorMessage = e.message;
+      if (data?.url) {
+        window.location.href = data.url;
       }
-      setError(errorMessage);
+    } catch (error) {
+      setError("Authentication failed. Please try again.");
     }
   };
 

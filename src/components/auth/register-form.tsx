@@ -21,6 +21,7 @@ import { CardWrapper } from "@/components/auth/card-wrapper";
 import { FormSucces } from "@/components/auth/form-succes";
 import { FormError } from "@/components/auth/form-error";
 import { PasswordInput } from "@/components/auth/password-input";
+import { redirect } from "next/navigation";
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -42,8 +43,16 @@ export const RegisterForm = () => {
 
     startTransition(() => {
       register(values).then((data) => {
-        setError(data?.error);
-        setSuccess(data?.success);
+        if (data?.error) {
+          setError(data.error);
+        }
+        if (data?.success) {
+          setSuccess(data.success);
+          // Add a small delay to ensure state updates complete
+          setTimeout(() => {
+            redirect(data.redirectTo);
+          }, 300);
+        }
       });
     });
   };

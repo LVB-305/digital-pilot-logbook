@@ -1,11 +1,9 @@
 "use server";
 import * as z from "zod";
 import { RegisterSchema } from "@/schemas/auth/auth";
-
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { createServerSupabaseClient } from "@/lib/supabase/server/server";
 import { redirect } from "next/navigation";
-import { createSession } from "@/actions/auth/auth-actions";
+import { revalidatePath } from "next/cache";
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -14,22 +12,21 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Invalid fields!" };
   }
 
-  const { email, password, confirm_password } = validatedFields.data;
+  const { email, password } = validatedFields.data;
 
   try {
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    if (result) {
-      await createSession(result.user.uid);
+    const supabase = await createServerSupabaseClient();
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      return { error: error.message };
     }
 
-    return { success: "User created successfully" };
-  } catch (e) {
-    let errorMessage;
-    if (e instanceof Error) {
-      errorMessage = e.message;
-      console.log(e.message);
-    } else return { error: errorMessage };
+    return { success: "User created successfully", redirectTo: "/app/flights" };
+  } catch (error) {
+    return { error: "An unexpected error occurred" };
   }
-
-  redirect("/logbook");
 };

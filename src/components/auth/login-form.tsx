@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { login } from "@/actions/auth/login";
 
 import { LoginSchema } from "@/schemas/auth/auth";
@@ -44,8 +44,16 @@ export const LoginForm = () => {
 
     startTransition(() => {
       login(values).then((data) => {
-        setError(data?.error);
-        setSuccess(data?.success);
+        if (data?.error) {
+          setError(data.error);
+        }
+        if (data?.success) {
+          setSuccess(data.success);
+          // Add a small delay to ensure state updates complete
+          setTimeout(() => {
+            redirect(data.redirectTo);
+          }, 300);
+        }
       });
     });
   };
