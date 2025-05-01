@@ -59,6 +59,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     },
   };
 
+  const handleLogout = async () => {
+    try {
+      // Server-side signout and get redirect info
+      const data = await logout();
+      setUser(null);
+      // Use the redirect URL from server action
+      if (data?.redirectTo) {
+        window.location.href = data.redirectTo;
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>

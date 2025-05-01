@@ -81,12 +81,12 @@ export const navigation: NavSection[] = [
       },
       {
         title: "Account",
-        href: "/account",
+        href: "/app/settings?tab=account",
         icon: User,
       },
       {
         title: "Settings",
-        href: "/settings",
+        href: "/app/settings",
         icon: Settings,
       },
     ],

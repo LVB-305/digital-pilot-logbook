@@ -1,5 +1,3 @@
-// Customisation required
-
 export type Json =
   | string
   | number
@@ -87,7 +85,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           updated_at?: string;
-          user_id: string;
+          user_id?: string;
         };
         Update: {
           chat_title?: string | null;
@@ -218,6 +216,58 @@ export type Database = {
             referencedColumns: ["id"];
           }
         ];
+      };
+      flights: {
+        Row: {
+          id: string;
+          date: string;
+          pilot_id: string;
+          aircraft_id: string;
+          departure_airport_code: string;
+          departure_runway: string | null;
+          destination_airport_code: string;
+          destination_runway: string | null;
+          block_start: string | null;
+          block_end: string | null;
+          flight_start: string | null;
+          flight_end: string | null;
+          total_block_minutes: number | null;
+          total_air_minutes: number | null;
+          remarks: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          date?: string;
+        };
+      };
+      simulator_sessions: {
+        Row: {
+          id: string;
+          date: string;
+          pilot_id: string;
+          simulator_id: string;
+          session_minutes: number;
+          instructor_name: string | null;
+          remarks: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          date?: string;
+        };
       };
     };
     Views: {

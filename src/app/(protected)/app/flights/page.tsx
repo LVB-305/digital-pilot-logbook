@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import Flights from "@/components/pages/flight-logs/flights";
 
 export default function FlightsPage() {
   return (
@@ -24,6 +25,7 @@ export default function FlightsPage() {
           </Button>
         }
       />
+      <Flights />
     </div>
   );
 }

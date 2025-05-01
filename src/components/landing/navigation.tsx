@@ -59,15 +59,18 @@ export default function Navigation() {
   }, [supabase]);
 
   const handleLogout = async () => {
-    // Client-side signout
-    await supabase.auth.signOut();
-    // Server-side cleanup
-    await logout();
-    // Force immediate user state update
-    setUser(null);
-    // Navigate and refresh
-    router.push("/");
-    router.refresh();
+    try {
+      // Server-side signout and get redirect info
+      const data = await logout();
+      // Force immediate user state update
+      setUser(null);
+      // Use the redirect URL from server action
+      if (data?.redirectTo) {
+        window.location.href = data.redirectTo;
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   const displayName =

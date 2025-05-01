@@ -10,7 +10,7 @@ export const publicRoutes = ["/"];
  * These routes do require authentication
  * @type {string[]}
  */
-export const privateRoutes = ["/app/flights"];
+export const privateRoutes = ["/app"];
 
 /**
  * An array of routes used for authentication

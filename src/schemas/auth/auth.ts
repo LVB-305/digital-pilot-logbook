@@ -57,3 +57,14 @@ export const ProfileSchema = z.object({
   company: z.string().min(1, { message: "Company is required" }),
   company_id: z.string().min(1, { message: "Company ID is required" }),
 });
+
+export const ChangePasswordSchema = z
+  .object({
+    current_password: z.string().min(1, "Current password is required"),
+    password: z.string().min(6, "Minimum 6 characters required"),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords don't match",
+    path: ["confirm_password"],
+  });
