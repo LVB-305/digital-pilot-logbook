@@ -36,7 +36,7 @@ export const navigation: NavSection[] = [
       },
       {
         title: "Crew",
-        href: "/crew",
+        href: "/app/crew",
         icon: Users,
       },
       {
