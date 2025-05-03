@@ -3,7 +3,7 @@ import { z } from "zod";
 export const FlightSchema = z.object({
   id: z.string().uuid(),
   date: z.string(),
-  pilot_id: z.string().uuid(),
+  user_id: z.string().uuid(),
   aircraft_id: z.string().uuid(),
   departure_airport_code: z.string(),
   departure_runway: z.string().nullable(),
@@ -23,7 +23,7 @@ export const FlightSchema = z.object({
 export const SimulatorSessionSchema = z.object({
   id: z.string().uuid(),
   date: z.string(),
-  pilot_id: z.string().uuid(),
+  user_id: z.string().uuid(),
   simulator_id: z.string().uuid(),
   session_minutes: z.number(),
   instructor_name: z.string().nullable(),

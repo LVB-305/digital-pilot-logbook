@@ -21,14 +21,19 @@ export default function Flights() {
       setLoading(true);
 
       try {
+        const { data: user } = await supabase.auth.getUser();
+
         const [
           { data: flightData },
           { data: simData },
           { data: aircraftData },
         ] = await Promise.all([
-          supabase.from("flights").select("*"),
-          supabase.from("simulator_sessions").select("*"),
-          supabase.from("aircraft").select("*"),
+          supabase.from("flights").select("*").eq("user_id", user.user?.id),
+          supabase
+            .from("simulator_sessions")
+            .select("*")
+            .eq("user_id", user.user?.id),
+          supabase.from("aircraft").select("*").eq("user_id", user.user?.id),
         ]);
 
         const aircraftById = (aircraftData || []).reduce(

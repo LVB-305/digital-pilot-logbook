@@ -42,9 +42,11 @@ export default function Crew() {
       setLoading(true);
 
       try {
+        const { data: user } = await supabase.auth.getUser();
         const { data: crewData } = await supabase
-          .from("pilot")
+          .from("pilots")
           .select("*")
+          .eq("user_id", user.user?.id) // Add RLS policy to filter by user_id
           .order("first_name", { ascending: true }); // Add default sorting at database level
 
         setCrews(crewData || []);

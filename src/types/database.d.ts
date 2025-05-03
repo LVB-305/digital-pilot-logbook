@@ -34,103 +34,6 @@ export type Database = {
   };
   public: {
     Tables: {
-      chat_messages: {
-        Row: {
-          chat_session_id: string;
-          content: string | null;
-          created_at: string;
-          id: string;
-          is_user_message: boolean;
-          reasoning: string | null;
-          sources: Json | null;
-        };
-        Insert: {
-          chat_session_id: string;
-          content?: string | null;
-          created_at?: string;
-          id?: string;
-          is_user_message: boolean;
-          reasoning?: string | null;
-          sources?: Json | null;
-        };
-        Update: {
-          chat_session_id?: string;
-          content?: string | null;
-          created_at?: string;
-          id?: string;
-          is_user_message?: boolean;
-          reasoning?: string | null;
-          sources?: Json | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "chat_messages_chat_session_id_fkey";
-            columns: ["chat_session_id"];
-            isOneToOne: false;
-            referencedRelation: "chat_sessions";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      chat_sessions: {
-        Row: {
-          chat_title: string | null;
-          created_at: string;
-          id: string;
-          updated_at: string;
-          user_id: string;
-        };
-        Insert: {
-          chat_title?: string | null;
-          created_at?: string;
-          id?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Update: {
-          chat_title?: string | null;
-          created_at?: string;
-          id?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "chat_sessions_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      error_feedback: {
-        Row: {
-          category: string | null;
-          created_at: string | null;
-          errormessage: string | null;
-          errorstack: string | null;
-          feedback: string;
-          id: number;
-        };
-        Insert: {
-          category?: string | null;
-          created_at?: string | null;
-          errormessage?: string | null;
-          errorstack?: string | null;
-          feedback: string;
-          id?: number;
-        };
-        Update: {
-          category?: string | null;
-          created_at?: string | null;
-          errormessage?: string | null;
-          errorstack?: string | null;
-          feedback?: string;
-          id?: number;
-        };
-        Relationships: [];
-      };
       users: {
         Row: {
           email: string;
@@ -149,79 +52,11 @@ export type Database = {
         };
         Relationships: [];
       };
-      vector_documents: {
-        Row: {
-          ai_description: string | null;
-          ai_keyentities: string[] | null;
-          ai_maintopics: string[] | null;
-          ai_title: string | null;
-          chunk_number: number;
-          created_at: string | null;
-          embedding: string | null;
-          filter_tags: string | null;
-          id: string;
-          page_number: number;
-          primary_language: string | null;
-          text_content: string;
-          timestamp: string;
-          title: string;
-          total_chunks: number;
-          total_pages: number;
-          user_id: string;
-        };
-        Insert: {
-          ai_description?: string | null;
-          ai_keyentities?: string[] | null;
-          ai_maintopics?: string[] | null;
-          ai_title?: string | null;
-          chunk_number: number;
-          created_at?: string | null;
-          embedding?: string | null;
-          filter_tags?: string | null;
-          id?: string;
-          page_number: number;
-          primary_language?: string | null;
-          text_content: string;
-          timestamp: string;
-          title: string;
-          total_chunks: number;
-          total_pages: number;
-          user_id: string;
-        };
-        Update: {
-          ai_description?: string | null;
-          ai_keyentities?: string[] | null;
-          ai_maintopics?: string[] | null;
-          ai_title?: string | null;
-          chunk_number?: number;
-          created_at?: string | null;
-          embedding?: string | null;
-          filter_tags?: string | null;
-          id?: string;
-          page_number?: number;
-          primary_language?: string | null;
-          text_content?: string;
-          timestamp?: string;
-          title?: string;
-          total_chunks?: number;
-          total_pages?: number;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "fk_user";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
       flights: {
         Row: {
           id: string;
           date: string;
-          pilot_id: string;
+          user_id: string;
           aircraft_id: string;
           departure_airport_code: string;
           departure_runway: string | null;
@@ -251,7 +86,7 @@ export type Database = {
         Row: {
           id: string;
           date: string;
-          pilot_id: string;
+          user_id: string;
           simulator_id: string;
           session_minutes: number;
           instructor_name: string | null;
@@ -272,28 +107,46 @@ export type Database = {
       pilots: {
         Row: {
           id: string;
+          user_id: string;
           first_name: string;
           last_name: string;
           email: string | null;
           phone: string | null;
+          address: string | null;
+          license_number: string | null;
+          company: string | null;
+          company_id: string | null;
+          note: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
+          user_id: string;
           first_name: string;
           last_name: string;
           email?: string | null;
           phone?: string | null;
+          address?: string | null;
+          license_number?: string | null;
+          company?: string | null;
+          company_id?: string | null;
+          note?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
+          user_id?: string;
           first_name?: string;
           last_name?: string;
           email?: string | null;
           phone?: string | null;
+          address?: string | null;
+          license_number?: string | null;
+          company?: string | null;
+          company_id?: string | null;
+          note?: string | null;
           created_at?: string;
           updated_at?: string;
         };

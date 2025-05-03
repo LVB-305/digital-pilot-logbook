@@ -2,13 +2,16 @@ import { z } from "zod";
 
 export const CrewScehma = z.object({
   id: z.string().uuid(),
+  user_id: z.string().uuid(),
   first_name: z.string(),
   last_name: z.string(),
   email: z.string().nullable(),
   phone: z.string().nullable(),
   address: z.string().nullable(),
+  license_number: z.string().nullable(),
   company: z.string().nullable(),
   company_id: z.string().nullable(),
+  note: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   display_name: z.string(),
