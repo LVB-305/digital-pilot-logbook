@@ -1,10 +1,8 @@
 import { z } from "zod";
 
-export const CrewScehma = z.object({
-  id: z.string().uuid(),
-  user_id: z.string().uuid(),
-  first_name: z.string(),
-  last_name: z.string(),
+const CrewBaseSchema = z.object({
+  first_name: z.string().min(1, "First Name is required."),
+  last_name: z.string().min(1, "Last Name is required."),
   email: z.string().nullable(),
   phone: z.string().nullable(),
   address: z.string().nullable(),
@@ -12,12 +10,22 @@ export const CrewScehma = z.object({
   company: z.string().nullable(),
   company_id: z.string().nullable(),
   note: z.string().nullable(),
+});
+
+export const CrewFormSchema = CrewBaseSchema;
+
+export const CrewSubmitSchema = CrewBaseSchema.extend({
+  id: z.string().uuid(),
+  user_id: z.string().uuid(),
   created_at: z.string(),
   updated_at: z.string(),
+});
+
+export const CrewSchema = CrewSubmitSchema.extend({
   display_name: z.string(),
 });
 
-export type CrewItem = z.infer<typeof CrewScehma>;
+export type CrewItem = z.infer<typeof CrewSchema>;
 
 interface Column {
   key: keyof CrewItem;
@@ -51,7 +59,7 @@ export const columns: Column[] = [
         ? `<a href="tel:${item.phone}" class="text-blue-600 hover:underline">${item.phone}</a>`
         : "",
   },
-  { key: "address", label: "Address" },
   { key: "company", label: "Company" },
   { key: "company_id", label: "Company ID" },
+  { key: "license_number", label: "License" },
 ];

@@ -47,7 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, [supabase]);
 
   const displayName =
-    user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
+    user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
   const email = user?.email || "";
   const avatarUrl = user?.user_metadata?.avatar_url;
 

@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Plane } from "lucide-react";
-import Navigation from "@/components/landing/navigation";
-import Footer from "@/components/landing/footer";
-import Features from "@/components/landing/features";
+import Navigation from "@/components/pages/landing/navigation";
+import Footer from "@/components/pages/landing/footer";
+import Features from "@/components/pages/landing/features";
 
 export default function Home() {
   return (

@@ -7,14 +7,14 @@ import { CrewItem } from "@/types/crew";
 import { Input } from "@/components/ui/input";
 import { List, Search, Table } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CrewTable } from "./table";
-import { CrewList } from "./list";
+import { CrewTable } from "@/components/pages/crew/table";
+import { CrewList } from "@/components/pages/crew/list";
 
 export default function Crew() {
   const [viewMode, setViewMode] = useState<"list" | "table">("list");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [crews, setCrews] = useState<CrewItem[]>([]); // add in schema
+  const [crews, setCrews] = useState<CrewItem[]>([]);
   const [supabase] = useState(() => createClient());
   const [nameOrder] = useLocalStorage("nameOrder", "firstNameFirst");
 
@@ -32,9 +32,9 @@ export default function Crew() {
         crew.display_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         crew.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         crew.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        crew.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         crew.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        crew.company_id?.toLowerCase().includes(searchTerm.toLowerCase())
+        crew.company_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        crew.license_number?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
   useEffect(() => {

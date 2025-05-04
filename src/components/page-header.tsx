@@ -45,35 +45,35 @@ export function PageHeader({
   return (
     <>
       <header className="flex items-center justify-between p-3 border-b">
-        {isTopLevelPage ? (
-          isMobile ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-primary font-medium hover:bg-primary-foreground w-10 h-10"
-              onClick={() => setNavOverlayOpen(true)}
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          ) : showBackButton ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-primary font-medium hover:bg-primary-foreground w-10 h-10"
-              asChild
-            >
-              <Link href={backHref}>
-                <ChevronLeft className="h-6 w-6" />
-              </Link>
-            </Button>
-          ) : (
-            <div className="w-10" />
-          )
+        {/* Leading */}
+        {isMobile && isTopLevelPage ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-primary font-medium hover:bg-primary-foreground w-10 h-10"
+            onClick={() => setNavOverlayOpen(true)}
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
+        ) : !isTopLevelPage && showBackButton ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-primary font-medium hover:bg-primary-foreground w-10 h-10"
+            asChild
+          >
+            <Link href={backHref}>
+              <ChevronLeft className="h-6 w-6" />
+            </Link>
+          </Button>
         ) : (
-          <div className="w-10" />
+          <div className="w-10" /> /* Spacer when no action button */
         )}
-        {/* Spacer when no back button */}
+
+        {/* Title */}
         <h1 className="text-xl font-medium">{title}</h1>
+
+        {/* Trailing */}
         {actionButton ? (
           actionButton
         ) : (

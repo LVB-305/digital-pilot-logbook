@@ -17,6 +17,18 @@ export function AccountForm() {
   const [authProvider, setAuthProvider] = useState<string | null>(null);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [initialNames, setInitialNames] = useState({
+    firstName: "",
+    lastName: "",
+  });
+
+  const splitFullName = (fullName: string) => {
+    const names = fullName.split(" ");
+    return {
+      firstName: names[0] || "",
+      lastName: names.slice(1).join(" ") || "",
+    };
+  };
 
   // Fetch user data when component mounts
   useEffect(() => {
@@ -27,6 +39,13 @@ export function AccountForm() {
       setUser(user);
 
       setAuthProvider(user?.app_metadata?.provider || null);
+
+      if (
+        user?.app_metadata?.provider !== "email" &&
+        user?.user_metadata?.full_name
+      ) {
+        setInitialNames(splitFullName(user.user_metadata.full_name));
+      }
     };
     getUser();
   }, []);
@@ -49,6 +68,28 @@ export function AccountForm() {
       .eq("id", user.id);
 
     if (error) throw error;
+
+    // Update display name when first or last name changes
+    if (
+      (field === "first_name" || field === "last_name") &&
+      authProvider === "email"
+    ) {
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("first_name, last_name")
+        .eq("id", user.id)
+        .single();
+
+      if (profileData) {
+        const displayName = `${profileData.first_name || ""} ${
+          profileData.last_name || ""
+        }`.trim();
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { full_name: displayName },
+        });
+        if (updateError) throw updateError;
+      }
+    }
   };
 
   const handleLogout = async () => {
@@ -74,12 +115,13 @@ export function AccountForm() {
         <div className="flex items-center justify-between">
           <Label className="text-base font-medium">Profile Picture</Label>
           <div className="flex items-center space-x-2">
-            <div className="relative group cursor-pointer">
+            <div className="relative group">
               <Input
                 type="file"
                 className="hidden"
                 id="avatar-upload"
                 accept="image/*"
+                disabled={authProvider !== "email"}
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
@@ -117,8 +159,11 @@ export function AccountForm() {
                 }}
               />
               <Avatar
-                className="h-14 w-14"
+                className={`h-14 w-14 ${
+                  authProvider !== "email" ? "cursor-default" : "cursor-pointer"
+                }`}
                 onClick={() =>
+                  authProvider === "email" &&
                   document.getElementById("avatar-upload")?.click()
                 }
               >
@@ -133,14 +178,31 @@ export function AccountForm() {
                     <Plus size={16} />
                   )}
                 </AvatarFallback>
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                  <Edit className="h-4 w-4 text-white" />
-                </div>
+                {authProvider === "email" && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                    <Edit className="h-4 w-4 text-white" />
+                  </div>
+                )}
               </Avatar>
             </div>
           </div>
         </div>
-        <Field label="Email" dbField="email" onUpdate={handleUpdateField} />
+        <Field
+          label="Email"
+          dbField="email"
+          onUpdate={handleUpdateField}
+          disabled={authProvider !== "email"}
+        />
+        <Field
+          label="First Name"
+          dbField="first_name"
+          onUpdate={handleUpdateField}
+        />
+        <Field
+          label="Last Name"
+          dbField="last_name"
+          onUpdate={handleUpdateField}
+        />
         <Field label="Phone" dbField="phone" onUpdate={handleUpdateField} />
         <Field label="Company" dbField="company" onUpdate={handleUpdateField} />
         <Field

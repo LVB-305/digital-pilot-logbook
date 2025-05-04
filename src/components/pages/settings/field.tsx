@@ -10,9 +10,10 @@ interface FieldProps {
   label: string;
   dbField: string;
   onUpdate: (field: string, value: string) => Promise<void>;
+  disabled?: boolean;
 }
 
-export default function Field({ label, dbField, onUpdate }: FieldProps) {
+export default function Field({ label, dbField, onUpdate,  }: FieldProps) {
   const [value, setValue] = useState<string>("");
   const [savedValue, setSavedValue] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
