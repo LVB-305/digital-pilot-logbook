@@ -50,7 +50,7 @@ export function Overlay({
                 onClick={leadingButton.onClick}
                 disabled={leadingButton.disabled}
                 size="sm"
-                className="text-blue-500"
+                className="text-sm font-medium text-blue-500 hover:text-blue-500 hover:opacity-70 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {leadingButton.label}
               </Button>
@@ -66,7 +66,7 @@ export function Overlay({
                 onClick={trailingButton.onClick}
                 disabled={trailingButton.disabled}
                 size="sm"
-                className="text-blue-500"
+                className="text-sm font-medium text-blue-500 hover:text-blue-500 hover:opacity-70 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {trailingButton.label}
               </Button>

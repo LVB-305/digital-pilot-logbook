@@ -41,7 +41,7 @@ export const navigation: NavSection[] = [
       },
       {
         title: "Fleet",
-        href: "/fleet",
+        href: "/app/fleet",
         icon: Plane,
       },
       {

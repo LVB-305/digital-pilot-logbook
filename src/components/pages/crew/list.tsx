@@ -1,7 +1,7 @@
+import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { CrewItem } from "@/types/crew";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Suspense } from "react";
 
 interface CrewListProps {
   crew: CrewItem[];
@@ -54,7 +54,7 @@ export function CrewList({ crew, loading = false }: CrewListProps) {
             groupCrewByFirstLetter(crew).map(({ letter, crew }) => (
               <div key={letter} className="pb-6">
                 <div className="divide-y">
-                  <div className="px-3 py-2 text-sm font-bold text-gray-500 dark:text-gray-200">
+                  <div className="px-3 py-2 text-sm font-bold sticky top-0 text-gray-500 dark:text-gray-200 z-10">
                     {letter}
                   </div>
                   {crew.map((crewMember) => (

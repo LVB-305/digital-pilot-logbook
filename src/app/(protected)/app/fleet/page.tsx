@@ -5,13 +5,13 @@ import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import Crew from "@/components/pages/crew/crew";
+import Fleet from "@/components/pages/fleet/fleet";
 
-export default function CrewPage() {
+export default function FleetPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <PageHeader
-        title="Crew"
+        title="Fleet"
         backHref="/"
         showBackButton={false}
         isTopLevelPage={true}
@@ -21,7 +21,7 @@ export default function CrewPage() {
             className="text-primary font-medium hover:bg-primary-foreground w-10 h-10"
             asChild
           >
-            <Link href="/app/crew/new">
+            <Link href="/app/fleet/new">
               <Plus className="h-4 w-4" />
             </Link>
           </Button>
@@ -29,7 +29,7 @@ export default function CrewPage() {
       />
 
       <div className="flex-1">
-        <Crew />
+        <Fleet />
       </div>
     </div>
   );
