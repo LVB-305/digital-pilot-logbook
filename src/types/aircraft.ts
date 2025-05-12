@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Building, Plane } from "lucide-react";
+import { ReactNode, createElement } from "react";
 
 export const AircraftSchema = z.object({
   registration: z.string().min(1, "Registration is required."),
@@ -36,15 +37,16 @@ interface Column {
   sortable?: boolean;
   sortType?: "string" | "number" | "date";
   width?: string;
-  formatFn?: (item: Aircraft) => string;
+  formatFn?: (item: Aircraft) => ReactNode;
 }
 
 export const columns: Column[] = [
   {
     key: "is_simulator",
     label: "Type",
+    sortable: false,
     formatFn: (item: Aircraft) =>
-      item.is_simulator ? "<div><Building /></div>" : "<div><Plane /></div>",
+      item.is_simulator ? createElement(Building) : createElement(Plane),
   },
   {
     key: "registration",

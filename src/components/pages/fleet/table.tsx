@@ -42,11 +42,9 @@ export function FleetTable({ aircraft, loading = false }: FleetTableProps) {
       const columnDef = columns.find((col) => col.key === sorting.column);
       if (!columnDef) return 0;
 
-      // Use formatFn for registration/simulator_type comparison
-      if (sorting.column === "registration" && columnDef.formatFn) {
-        return sorting.direction === "asc"
-          ? columnDef.formatFn(a).localeCompare(columnDef.formatFn(b))
-          : columnDef.formatFn(b).localeCompare(columnDef.formatFn(a));
+      // Skip sorting for columns that return React elements
+      if (columnDef.formatFn && typeof columnDef.formatFn(a) !== 'string') {
+        return 0;
       }
 
       const valueA = a[sorting.column as keyof Aircraft];
@@ -57,9 +55,14 @@ export function FleetTable({ aircraft, loading = false }: FleetTableProps) {
       switch (columnDef.sortType) {
         case "string":
           if (columnDef.formatFn) {
-            return sorting.direction === "asc"
-              ? columnDef.formatFn(a).localeCompare(columnDef.formatFn(b))
-              : columnDef.formatFn(b).localeCompare(columnDef.formatFn(a));
+            const formattedA = columnDef.formatFn(a);
+            const formattedB = columnDef.formatFn(b);
+            if (typeof formattedA === 'string' && typeof formattedB === 'string') {
+              return sorting.direction === "asc"
+                ? formattedA.localeCompare(formattedB)
+                : formattedB.localeCompare(formattedA);
+            }
+            return 0;
           }
           return sorting.direction === "asc"
             ? String(valueA).localeCompare(String(valueB))
@@ -143,7 +146,7 @@ export function FleetTable({ aircraft, loading = false }: FleetTableProps) {
                 sortedAircraft.map((aircraft) => (
                   <TableRow
                     key={aircraft.id}
-                    className="cursor-pointer hover:bg-gray-50"
+                    className="cursor-pointer hover:bg-gray-50 hover:bg-gray-100 dark:hover:bg-zinc-700"
                     onClick={() => {
                       router.push(`/app/fleet/${aircraft.id}`);
                     }}
@@ -153,14 +156,11 @@ export function FleetTable({ aircraft, loading = false }: FleetTableProps) {
                         key={column.key}
                         className="whitespace-nowrap"
                         style={{ minWidth: column.width, width: column.width }}
-                        dangerouslySetInnerHTML={
-                          column.formatFn
-                            ? { __html: column.formatFn(aircraft) }
-                            : {
-                                __html: aircraft[column.key]?.toString() || "",
-                              }
-                        }
-                      />
+                      >
+                        {column.formatFn
+                          ? column.formatFn(aircraft)
+                          : aircraft[column.key]?.toString() || ""}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))
