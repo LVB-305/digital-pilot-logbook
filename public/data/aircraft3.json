@@ -1,0 +1,12 @@
+{
+ "data": [
+    {
+        "Manufacturer": "AIRBUS S.A.S",
+        "Type": "A320",
+        "Model": "A320-214",
+        "EngineCount": 2,
+        "EngineType": "Jet",
+        "Category": "Multi-Pilot"
+    }
+ ] 
+}

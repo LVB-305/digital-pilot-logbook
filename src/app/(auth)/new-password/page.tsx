@@ -7,7 +7,7 @@ import { NewPasswordForm } from "@/components/auth/new-password-form";
 export const metadata: Metadata = {
   title: "New Password",
   description: "Account new password.",
-}
+};
 
 export default function NewPasswordPage() {
   return (
@@ -31,5 +31,5 @@ export default function NewPasswordPage() {
         .
       </p>
     </div>
-  )
+  );
 }

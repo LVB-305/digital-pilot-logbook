@@ -7,7 +7,7 @@ import { LoginForm } from "@/components/auth/login-form";
 export const metadata: Metadata = {
   title: "Login",
   description: "Account login form.",
-}
+};
 
 export default function LoginPage() {
   return (
@@ -31,5 +31,5 @@ export default function LoginPage() {
         .
       </p>
     </div>
-  )
+  );
 }

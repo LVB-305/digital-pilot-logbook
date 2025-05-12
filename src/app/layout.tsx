@@ -1,10 +1,9 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import { settings } from "@/config/settings";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 
-import "./globals.css";
+import "@/styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,14 +48,14 @@ export const metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-}
+};
 
 export const viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
-}
+};
 
 export default function RootLayout({
   children,
@@ -64,9 +63,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} flex min-h-screen flex-col bg-background text-primary`}>
-      {settings.themeToggleEnabled ? (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${inter.className} flex min-h-screen flex-col bg-background text-primary`}
+      >
+        {settings.themeToggleEnabled ? (
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
           </ThemeProvider>

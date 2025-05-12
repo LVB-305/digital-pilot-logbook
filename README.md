@@ -7,8 +7,8 @@ A modern web application for pilots to track, manage, and analyze their flight h
 - **Digital Logbook**: Record and track all your flights in one place
 - **Dashboard**: Visualize your flying statistics and progress
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices (with PWA support in future version)
-- **Firebase Authentication**: Secure user accounts
-- **Cloud Storage**: All your data securely stored in Firestore
+- **Supabase Authentication**: Secure user accounts
+- **Cloud Storage**: All your data securely stored in Supabase
 - **Export Options**: Generate reports and export your logbook data (support in future version)
 
 ## Tech Stack
@@ -18,7 +18,7 @@ A modern web application for pilots to track, manage, and analyze their flight h
 - TypeScript
 - Tailwind CSS
 - shadcn/ui components
-- Firebase (Firestore & Authentication)
+- Supabase (Database & Authentication)
 
 ## Getting Started
 
@@ -26,7 +26,7 @@ A modern web application for pilots to track, manage, and analyze their flight h
 
 - Node.js 18.0 or higher
 - npm or yarn
-- Firebase account
+- Supabase account
 
 ### Installation
 
@@ -45,22 +45,18 @@ npm install
 yarn install
 ```
 
-3. Set up your Firebase project:
-   - Create a new project in the [Firebase Console](https://console.firebase.google.com/)
-   - Enable Authentication with email/password provider
-   - Create a Firestore database
-   - Generate your Firebase configuration
+3. Set up your Supabase project:
+   - Create a new project in the [Supabase Dashboard](https://app.supabase.com)
+   - Get your project URL and anon key from the project settings
+   - Set up Authentication with the providers you want to use
+   - Run the database migrations
 
-4. Create a `.env.local` file in the root directory with your Firebase configuration:
+4. Create a `.env.local` file in the root directory with your Supabase configuration:
 
 ```
-# Firebase Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 ```
 
 5. Run the development server:
@@ -73,31 +69,6 @@ yarn dev
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-## Firebase Setup Guide
-
-1. **Create a Firebase Project**:
-   - Go to the [Firebase Console](https://console.firebase.google.com/)
-   - Click "Add project" and follow the setup wizard
-   - Enable Google Analytics if desired
-
-2. **Set up Authentication**:
-   - In your Firebase project, go to "Authentication"
-   - Click "Get started"
-   - Enable the Email/Password provider
-   - Optionally, set up additional providers like Google, Microsoft, etc.
-
-3. **Create Firestore Database**:
-   - Go to "Firestore Database"
-   - Click "Create database"
-   - Choose production or test mode (you can change this later)
-   - Select a location for your database
-
-4. **Get Firebase Configuration**:
-   - Go to Project Settings (gear icon)
-   - Scroll down to "Your apps" section
-   - Click the web app icon (</>) to register a new web app if you haven't already
-   - Copy the configuration object that appears
-
 ## Project Structure
 
 ```
@@ -109,11 +80,11 @@ digital-pilot-logbook/
 │   ├── ui/              # shadcn UI components
 │   └── ...
 ├── lib/                 # Utility functions
-│   ├── firebase.ts      # Firebase configuration
+│   ├── supabase.ts      # Supabase configuration
 │   └── ...
-├── schemes/               # TypeScript type definitions
-├── public/              # Static assets
-├── .env.local           # Environment variables
+├── schemes/            # TypeScript type definitions
+├── public/             # Static assets
+├── .env.local          # Environment variables
 └── ...
 ```
 
@@ -127,4 +98,4 @@ No license has been decided for now as this is a very early work in progress.
 - [React](https://reactjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [shadcn/ui](https://ui.shadcn.com/)
-- [Firebase](https://firebase.google.com/)
+- [Supabase](https://supabase.com/)
