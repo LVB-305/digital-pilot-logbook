@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bolt, List, Search, Table } from "lucide-react";
 import { FlightList } from "./list";
+import { FlightTable } from "./table";
 import { FlightListItem } from "@/types/flight";
 import { Aircraft } from "@/types/aircraft";
 import { createClient } from "@/lib/supabase/client/client";
+import { fetchFlightData } from "@/actions/pages/flights/flight";
 
 export default function Flights() {
   const [viewMode, setViewMode] = useState<"list" | "table">("list");
@@ -21,31 +23,10 @@ export default function Flights() {
       setLoading(true);
 
       try {
-        const { data: user } = await supabase.auth.getUser();
-
-        const [
-          { data: flightData },
-          { data: simData },
-          { data: aircraftData },
-        ] = await Promise.all([
-          supabase.from("flights").select("*").eq("user_id", user.user?.id),
-          supabase
-            .from("simulator_sessions")
-            .select("*")
-            .eq("user_id", user.user?.id),
-          supabase.from("aircraft").select("*").eq("user_id", user.user?.id),
-        ]);
-
-        const aircraftById = (aircraftData || []).reduce(
-          (acc: Record<string, Aircraft>, aircraft: Aircraft) => {
-            acc[aircraft.id] = aircraft;
-            return acc;
-          },
-          {}
-        );
-
-        setAircraftMap(aircraftById);
-        setFlights([...(flightData || []), ...(simData || [])]);
+        const { flights: flightData, aircraftMap: aircraftData } =
+          await fetchFlightData();
+        setAircraftMap(aircraftData);
+        setFlights(flightData);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -75,10 +56,10 @@ export default function Flights() {
       .subscribe();
 
     const aircraftSubscription = supabase
-      .channel("aircraft-changes")
+      .channel("fleet-changes")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "aircraft" },
+        { event: "*", schema: "public", table: "fleet" },
         () => fetchInitialData()
       )
       .subscribe();
@@ -124,7 +105,7 @@ export default function Flights() {
             size="icon"
             onClick={toggleViewMode}
             // disabled={loading}
-            disabled
+            // disabled
           >
             {viewMode === "list" ? (
               <Table className="w-4 h-4" />
@@ -144,10 +125,12 @@ export default function Flights() {
               aircraftMap={aircraftMap}
             />
           ) : (
-            <div className="p-4">
-              <div className="text-center text-gray-500">
-                Table view coming soon...
-              </div>
+            <div className="px-4">
+              <FlightTable
+                loading={loading}
+                flights={flights}
+                aircraftMap={aircraftMap}
+              />
             </div>
           )
         ) : (

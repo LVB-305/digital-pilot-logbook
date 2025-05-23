@@ -10,38 +10,12 @@ import {
 import { Aircraft } from "@/types/aircraft";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight } from "lucide-react";
-
-interface FlightGrouping {
-  month: string;
-  flights: FlightListItem[];
-}
+import { groupFlightsByMonth } from "@/actions/pages/flights/flight";
 
 interface FlightListProps {
   loading?: boolean;
   flights: FlightListItem[];
   aircraftMap: Record<string, Aircraft>;
-}
-
-function groupFlightsByMonth(flights: FlightListItem[]): FlightGrouping[] {
-  const groups: Record<string, FlightListItem[]> = {};
-
-  flights.forEach((flight) => {
-    const [day, month, year] = flight.date.split("/");
-    const date = new Date(+year, +month - 1, +day);
-    const monthKey = format(date, "MMMM yyyy");
-
-    if (!groups[monthKey]) {
-      groups[monthKey] = [];
-    }
-    groups[monthKey].push(flight);
-  });
-
-  return Object.entries(groups).map(([month, flights]) => ({
-    month,
-    flights: flights.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    ),
-  }));
 }
 
 export function FlightList({
@@ -114,17 +88,17 @@ export function FlightList({
                 {month}
               </h2>
               <div className="divide-y divide-gray-100">
+                {" "}
                 {flights.map((flight) => {
-                  const [day, month, year] = flight.date.split("/");
-                  const date = new Date(+year, +month - 1, +day);
+                  const date = new Date(flight.date);
 
                   return (
                     <button
                       key={flight.id}
-                      className="w-full group hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                      className="w-full px-2 group hover:bg-gray-50 focus:outline-none focus:bg-gray-50 cursor-pointer"
                       onClick={() => router.push(`/app/flights/${flight.id}`)}
                     >
-                      <div className="flex px-4 py-3 relative text-left">
+                      <div className="flex px-2 py-3 relative text-left">
                         {/* Line color based on type */}
                         <div
                           className={`absolute left-0 top-2 bottom-2 w-1.5 rounded-sm ${
@@ -142,13 +116,12 @@ export function FlightList({
                             <div className="text-gray-500 text-sm">
                               {format(new Date(date), "dd MMM yyyy")}
                             </div>
-
                             {/* Route or Simulator type */}
                             <div className="text-black font-bold text-base mt-1">
                               {isSimulatorSession(flight) ? (
                                 <span className="text-black">
                                   {aircraftMap[flight.simulator_id]
-                                    ?.simulator_type || "Unknown Simulator"}
+                                    ?.registration || "Unknown Simulator"}
                                 </span>
                               ) : (
                                 <>
@@ -159,22 +132,23 @@ export function FlightList({
                                   {flight.destination_airport_code}
                                 </>
                               )}
-                            </div>
-
+                            </div>{" "}
                             {/* Time */}
-                            {isFlight(flight) && (
-                              <div className="text-sm text-gray-900 mt-1">
-                                {flight.block_start}{" "}
-                                <span className="inline-block transform translate-y-[-1px]">
-                                  -
-                                </span>{" "}
-                                {flight.block_end}
-                              </div>
-                            )}
+                            {isFlight(flight) &&
+                              flight.block_start &&
+                              flight.block_end && (
+                                <div className="text-sm text-gray-900 mt-1">
+                                  {flight.block_start.substring(0, 5)}{" "}
+                                  <span className="inline-block transform translate-y-[-1px]">
+                                    -
+                                  </span>{" "}
+                                  {flight.block_end.substring(0, 5)}
+                                </div>
+                              )}
                           </div>
                         </div>
 
-                        <div className="absolute right-12 top-1/2 -translate-y-1/2 flex flex-col items-end">
+                        <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col items-end">
                           {/* Right section: Flight time and Registration */}
                           <div className="text-sm text-gray-900">
                             {getDisplayTime(flight)}
@@ -192,7 +166,7 @@ export function FlightList({
                         </div>
 
                         {/* Chevron */}
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
                           <ChevronRight className="h-5 w-5 text-gray-400" />
                         </div>
                       </div>
