@@ -63,8 +63,9 @@ export default function FleetForm({
   const engineTypeRef = useRef<HTMLButtonElement | null>(null);
   const enginetypeOptions = [
     { label: "Piston", value: "piston" },
-    { label: "Turbine", value: "turbine" },
+    { label: "Turboprop", value: "turboprop" },
     { label: "Jet", value: "jet" },
+    { label: "Helicopter", value: "helicopter" },
     { label: "Electric", value: "electric" },
     { label: "Unpowered", value: "unpowered" },
   ];
@@ -275,6 +276,7 @@ export default function FleetForm({
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          className="cursor-pointer"
                         />
                       </div>
                       <FormMessage />
@@ -345,7 +347,8 @@ export default function FleetForm({
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-muted-foreground">
-                              {field.value}
+                              {(field.value ?? "").charAt(0).toUpperCase() +
+                                (field.value ?? "").slice(1)}
                             </span>
                             <ChevronsUpDown className="w-4 h-4" />
                           </div>
@@ -396,7 +399,8 @@ export default function FleetForm({
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-muted-foreground">
-                              {field.value}
+                              {(field.value ?? "").charAt(0).toUpperCase() +
+                                (field.value ?? "").slice(1)}
                             </span>
                             <ChevronsUpDown className="w-4 h-4" />
                           </div>
@@ -452,7 +456,8 @@ export default function FleetForm({
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-muted-foreground">
-                              {field.value}
+                              {(field.value ?? "").charAt(0).toUpperCase() +
+                                (field.value ?? "").slice(1)}
                             </span>
                             <ChevronsUpDown className="w-4 h-4" />
                           </div>

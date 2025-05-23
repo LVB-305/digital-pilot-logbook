@@ -4,6 +4,8 @@ import { Overlay } from "@/components/ui/overlay";
 import { Search, Check } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
+let aircraftCache: any[] | null = null;
+
 interface AircraftType {
   model: string;
   type: string;
@@ -35,12 +37,77 @@ export function TypeSelectDialog({
   const [searchResults, setSearchResults] = useState<AircraftType[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Load aircraft data when overlay opens
+  useEffect(() => {
+    const loadAircraftData = async () => {
+      if (!isOpen) return;
+      if (aircraftCache) {
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const response = await fetch("/data/aircraft.json");
+        const data = await response.json();
+        aircraftCache = data;
+      } catch (error) {
+        console.error("Error loading aircraft data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadAircraftData();
+  }, [isOpen]);
+
+  // Load recent types
   useEffect(() => {
     const stored = localStorage.getItem(RECENT_TYPES_KEY);
     if (stored) {
       setRecentTypes(JSON.parse(stored));
     }
   }, []);
+  // Debounced search results
+  useEffect(() => {
+    if (!searchTerm || !aircraftCache) {
+      setSearchResults([]);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (!aircraftCache) return;
+
+      const results: AircraftType[] = (aircraftCache as AircraftType[])
+        .filter((aircraft: any) => {
+          const normalizedTerm = searchTerm.toLowerCase().replace(/\s+/g, "");
+          const normalizedModel = aircraft.Model?.toLowerCase().replace(
+            /\s+/g,
+            ""
+          );
+          const normalizedType =
+            aircraft.Type?.toLowerCase().replace(/\s+/g, "") || "";
+          const normalizedManufacturer =
+            aircraft.Manufacturer?.toLowerCase().replace(/\s+/g, "") || "";
+
+          return (
+            normalizedModel.includes(normalizedTerm) ||
+            normalizedType.includes(normalizedTerm) ||
+            normalizedManufacturer.includes(normalizedTerm)
+          );
+        })
+        .map((aircraft: any) => ({
+          model: aircraft.Model || "",
+          type: aircraft.Type || "",
+          manufacturer: aircraft.Manufacturer || "",
+          category: aircraft.Category?.toLowerCase() || "",
+          engine_count: aircraft.EngineCount || 0,
+          engine_type: aircraft.EngineType?.toLowerCase() || "",
+          passenger_seats: 0, // This field is not in the JSON data, defaulting to 0
+        }));
+      setSearchResults(results);
+    }, 300); // 300ms debounce delay
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const handleTypeSelect = (type: AircraftType) => {
     onSelect(type);
@@ -54,53 +121,8 @@ export function TypeSelectDialog({
     setRecentTypes(updatedRecent);
     localStorage.setItem(RECENT_TYPES_KEY, JSON.stringify(updatedRecent));
   };
-
-  const handleSearch = async (term: string) => {
-    setSearchTerm(term);
-    if (!term) {
-      setSearchResults([]);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      // TODO: Implement actual search logic here
-      // For now, using mock data
-      const results: AircraftType[] = [
-        {
-          model: "C172",
-          type: "C172",
-          manufacturer: "Cessna",
-          category: "single-pilot",
-          engine_count: 1,
-          engine_type: "piston",
-          passenger_seats: 3,
-        },
-        {
-          model: "DA 40 D",
-          type: "DA 40",
-          manufacturer: "Diamond",
-          category: "single-pilot",
-          engine_count: 1,
-          engine_type: "piston",
-          passenger_seats: 3,
-        },
-      ].filter((type) => {
-        const normalizedTerm = term.toLowerCase().replace(/\s+/g, "");
-        const normalizedModel = type.model.toLowerCase().replace(/\s+/g, "");
-        const normalizedManufacturer = type.manufacturer
-          .toLowerCase()
-          .replace(/\s+/g, "");
-
-        return (
-          normalizedModel.includes(normalizedTerm) ||
-          normalizedManufacturer.includes(normalizedTerm)
-        );
-      });
-      setSearchResults(results);
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleClear = () => {
@@ -116,7 +138,7 @@ export function TypeSelectDialog({
   };
   const renderTypeItem = (type: AircraftType) => (
     <button
-      key={type.model}
+      key={type.type && "-" && type.model}
       className="w-full px-4 py-3 text-left hover:bg-input flex items-center justify-between cursor-pointer"
       onClick={() => handleTypeSelect(type)}
     >
@@ -141,7 +163,7 @@ export function TypeSelectDialog({
           type="text"
           placeholder="Search"
           value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={handleSearch}
           className="pl-10 rounded-none border-none focus-visible:ring-0"
           disabled={loading}
         />
