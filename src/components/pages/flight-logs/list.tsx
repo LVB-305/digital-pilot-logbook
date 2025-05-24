@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import {
-  FlightListItem,
+  FlightItem,
   isFlight,
   isSimulatorSession,
   getDisplayTime,
@@ -14,7 +14,7 @@ import { groupFlightsByMonth } from "@/actions/pages/flights/flight";
 
 interface FlightListProps {
   loading?: boolean;
-  flights: FlightListItem[];
+  flights: FlightItem[];
   aircraftMap: Record<string, Aircraft>;
 }
 

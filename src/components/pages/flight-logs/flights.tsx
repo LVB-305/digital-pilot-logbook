@@ -1,22 +1,82 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bolt, List, Search, Table } from "lucide-react";
+import { List, Search, Table, Columns } from "lucide-react";
 import { FlightList } from "./list";
 import { FlightTable } from "./table";
-import { FlightListItem } from "@/types/flight";
+import {
+  FlightItem,
+  isFlight,
+  isSimulatorSession,
+  columns,
+} from "@/types/flight";
 import { Aircraft } from "@/types/aircraft";
 import { createClient } from "@/lib/supabase/client/client";
 import { fetchFlightData } from "@/actions/pages/flights/flight";
+import { ViewOptionsOverlay } from "./view-options-overlay";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 export default function Flights() {
   const [viewMode, setViewMode] = useState<"list" | "table">("list");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [flights, setFlights] = useState<FlightListItem[]>([]);
+  const [flights, setFlights] = useState<FlightItem[]>([]);
   const [aircraftMap, setAircraftMap] = useState<Record<string, Aircraft>>({});
   const [supabase] = useState(() => createClient());
+  const [visibleColumns, setVisibleColumns] = useLocalStorage<string[]>(
+    "visibleColumns",
+    columns.filter((col) => !col.hiddenByDefault).map((col) => col.key)
+  );
+  const [showViewOptions, setShowViewOptions] = useState(false);
+
+  // Filter flights based on search term
+  const filteredFlights = useMemo(() => {
+    if (!searchTerm) return flights;
+
+    const searchLower = searchTerm.toLowerCase();
+    return flights.filter((flight) => {
+      // For both flight and simulator sessions, search in:
+      // - Date
+      // - Remarks
+      // - Training description
+      const baseMatch = [
+        flight.date,
+        flight.remarks,
+        flight.training_description,
+      ].some((field) => field?.toLowerCase().includes(searchLower));
+
+      if (baseMatch) return true;
+
+      // Aircraft registration and model
+      const aircraft = isFlight(flight)
+        ? aircraftMap[flight.aircraft_id]
+        : aircraftMap[flight.simulator_id];
+
+      const aircraftMatch =
+        aircraft &&
+        (aircraft.registration.toLowerCase().includes(searchLower) ||
+          aircraft.model?.toLowerCase().includes(searchLower));
+
+      if (aircraftMatch) return true;
+
+      // Flight-specific fields
+      if (isFlight(flight)) {
+        return [
+          flight.departure_airport_code,
+          flight.destination_airport_code,
+          flight.pic_name,
+        ].some((field) => field?.toLowerCase().includes(searchLower));
+      }
+
+      // Simulator-specific fields
+      if (isSimulatorSession(flight)) {
+        return flight.instructor_name?.toLowerCase().includes(searchLower);
+      }
+
+      return false;
+    });
+  }, [flights, searchTerm, aircraftMap]);
 
   useEffect(() => {
     async function fetchInitialData() {
@@ -91,21 +151,20 @@ export default function Flights() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         </div>
         <div className="space-x-2">
+          {" "}
           <Button
             variant="outline"
             size="icon"
-            onClick={() => {}}
-            // disabled={loading}
-            disabled
+            onClick={() => setShowViewOptions(true)}
+            disabled={loading}
           >
-            <Bolt className="h-4 w-4" />
+            <Columns className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
             size="icon"
             onClick={toggleViewMode}
-            // disabled={loading}
-            // disabled
+            disabled={loading}
           >
             {viewMode === "list" ? (
               <Table className="w-4 h-4" />
@@ -114,22 +173,22 @@ export default function Flights() {
             )}
           </Button>
         </div>
-      </div>
-
+      </div>{" "}
       <div className="flex-1">
-        {loading || flights.length > 0 ? (
+        {loading || filteredFlights.length > 0 ? (
           viewMode === "list" ? (
             <FlightList
               loading={loading}
-              flights={flights}
+              flights={filteredFlights}
               aircraftMap={aircraftMap}
             />
           ) : (
             <div className="px-4">
               <FlightTable
                 loading={loading}
-                flights={flights}
+                flights={filteredFlights}
                 aircraftMap={aircraftMap}
+                visibleColumns={visibleColumns}
               />
             </div>
           )
@@ -154,6 +213,12 @@ export default function Flights() {
           </div>
         )}
       </div>
+      <ViewOptionsOverlay
+        isOpen={showViewOptions}
+        onClose={() => setShowViewOptions(false)}
+        visibleColumns={visibleColumns}
+        onVisibilityChange={setVisibleColumns}
+      />
     </div>
   );
 }

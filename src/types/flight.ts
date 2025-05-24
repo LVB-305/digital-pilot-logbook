@@ -79,15 +79,15 @@ export const SimulatorSessionSchema = z.object({
 export type Flight = z.infer<typeof FlightSchema>;
 export type SimulatorSession = z.infer<typeof SimulatorSessionSchema>;
 
-export type FlightListItem = Flight | SimulatorSession;
+export type FlightItem = Flight | SimulatorSession;
 
 // Type guards
-export const isFlight = (item: FlightListItem): item is Flight => {
+export const isFlight = (item: FlightItem): item is Flight => {
   return "departure_airport_code" in item;
 };
 
 export const isSimulatorSession = (
-  item: FlightListItem
+  item: FlightItem
 ): item is SimulatorSession => {
   return "simulator_id" in item && "session_minutes" in item;
 };
@@ -129,7 +129,7 @@ export const formatMovement = (day: number, night: number) => {
 };
 
 // Helper functions
-export const getDisplayTime = (item: FlightListItem): string | null => {
+export const getDisplayTime = (item: FlightItem): string | null => {
   if (isFlight(item)) {
     return item.total_block_minutes
       ? `${Math.floor(item.total_block_minutes / 60)}:${(
@@ -167,10 +167,7 @@ interface Column {
   sortType?: "string" | "number" | "date" | "time" | "boolean";
   hiddenByDefault?: boolean;
   width?: string;
-  getValue?: (
-    item: FlightListItem,
-    aircraftMap?: Record<string, Aircraft>
-  ) => any;
+  getValue?: (item: FlightItem, aircraftMap?: Record<string, Aircraft>) => any;
 }
 
 export const columns: Column[] = [
@@ -180,14 +177,14 @@ export const columns: Column[] = [
     sortable: true,
     sortType: "date",
     width: "120px",
-    getValue: (item: FlightListItem) => formatDate(item.date),
+    getValue: (item: FlightItem) => formatDate(item.date),
   },
   {
     key: "departure",
     label: "Departure",
     width: "120px",
     sortable: true,
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item)
         ? formatLocation(
             item.departure_airport_code,
@@ -200,7 +197,7 @@ export const columns: Column[] = [
     label: "Destination",
     width: "120px",
     sortable: true,
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item)
         ? formatLocation(
             item.destination_airport_code,
@@ -214,7 +211,7 @@ export const columns: Column[] = [
     width: "120px",
     sortable: true,
     getValue: (
-      item: FlightListItem,
+      item: FlightItem,
       aircraftMap: Record<string, Aircraft> = {}
     ) => {
       if (isFlight(item)) {
@@ -233,7 +230,7 @@ export const columns: Column[] = [
     sortable: true,
     sortType: "time",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       formatTime(
         isFlight(item)
           ? item.total_block_minutes || 0
@@ -246,14 +243,14 @@ export const columns: Column[] = [
     sortable: true,
     sortType: "time",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTime(item.total_air_minutes || 0) : null,
   },
   {
     key: "block_start",
     label: "Off Block",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTimeString(item.block_start) : null,
     hiddenByDefault: true,
   },
@@ -261,7 +258,7 @@ export const columns: Column[] = [
     key: "block_end",
     label: "On Block",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTimeString(item.block_end) : null,
     hiddenByDefault: true,
   },
@@ -269,7 +266,7 @@ export const columns: Column[] = [
     key: "flight_start",
     label: "Take Off",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTimeString(item.flight_start) : null,
     hiddenByDefault: true,
   },
@@ -277,7 +274,7 @@ export const columns: Column[] = [
     key: "flight_end",
     label: "Landing",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTimeString(item.flight_end) : null,
     hiddenByDefault: true,
   },
@@ -285,7 +282,7 @@ export const columns: Column[] = [
     key: "scheduled_start",
     label: "Scheduled Take Off",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTimeString(item.scheduled_start) : null,
     hiddenByDefault: true,
   },
@@ -293,7 +290,7 @@ export const columns: Column[] = [
     key: "scheduled_end",
     label: "Scheduled Landing",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTimeString(item.scheduled_end) : null,
     hiddenByDefault: true,
   },
@@ -301,7 +298,7 @@ export const columns: Column[] = [
     key: "duty_start",
     label: "Duty Start",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTimeString(item.duty_start) : null,
     hiddenByDefault: true,
   },
@@ -309,7 +306,7 @@ export const columns: Column[] = [
     key: "duty_end",
     label: "Duty End",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTimeString(item.duty_end) : null,
     hiddenByDefault: true,
   },
@@ -317,14 +314,14 @@ export const columns: Column[] = [
     key: "pic_name",
     label: "Pilot In Command",
     width: "120px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? item.pic_name : item.instructor_name,
     hiddenByDefault: true,
   },
   {
     key: "takeoffs",
     label: "Take Offs",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item)
         ? formatMovement(item.day_takeoffs, item.night_takeoffs)
         : null,
@@ -332,7 +329,7 @@ export const columns: Column[] = [
   {
     key: "landings",
     label: "Landings",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item)
         ? formatMovement(item.day_landings, item.night_landings)
         : null,
@@ -341,37 +338,35 @@ export const columns: Column[] = [
   {
     key: "go_arounds",
     label: "Go Arounds",
-    getValue: (item: FlightListItem) =>
-      isFlight(item) ? item.go_arounds : null,
+    getValue: (item: FlightItem) => (isFlight(item) ? item.go_arounds : null),
     hiddenByDefault: true,
   },
   {
     key: "hobbs_start",
     label: "Duty Start",
     width: "100px",
-    getValue: (item: FlightListItem) => item.hobbs_start,
+    getValue: (item: FlightItem) => item.hobbs_start,
     hiddenByDefault: true,
   },
   {
     key: "hobbs_end",
     label: "Duty End",
     width: "100px",
-    getValue: (item: FlightListItem) => item.hobbs_end,
+    getValue: (item: FlightItem) => item.hobbs_end,
     hiddenByDefault: true,
   },
   {
     key: "tach_start",
     label: "Duty Start",
     width: "100px",
-    getValue: (item: FlightListItem) =>
-      isFlight(item) ? item.tach_start : null,
+    getValue: (item: FlightItem) => (isFlight(item) ? item.tach_start : null),
     hiddenByDefault: true,
   },
   {
     key: "tach_end",
     label: "Duty End",
     width: "100px",
-    getValue: (item: FlightListItem) => (isFlight(item) ? item.tach_end : null),
+    getValue: (item: FlightItem) => (isFlight(item) ? item.tach_end : null),
     hiddenByDefault: true,
   },
   // Add time fields (night, IFR, XC, and function (PIC, CoPilot, Dual, Instructor, solo, spic, picus [special]))
@@ -381,7 +376,7 @@ export const columns: Column[] = [
     sortable: true,
     sortType: "time",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTime(item.night_time_minutes || 0) : null,
   },
   {
@@ -390,7 +385,7 @@ export const columns: Column[] = [
     sortable: true,
     sortType: "time",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTime(item.ifr_time_minutes || 0) : null,
   },
   {
@@ -399,7 +394,7 @@ export const columns: Column[] = [
     sortable: true,
     sortType: "time",
     width: "100px",
-    getValue: (item: FlightListItem) =>
+    getValue: (item: FlightItem) =>
       isFlight(item) ? formatTime(item.xc_time_minutes || 0) : null,
     hiddenByDefault: true,
   },
@@ -408,7 +403,7 @@ export const columns: Column[] = [
     label: "Function",
     sortable: true,
     width: "120px",
-    getValue: (item: FlightListItem) => {
+    getValue: (item: FlightItem) => {
       if (!isFlight(item)) return null;
 
       if (item.is_solo) return "SOLO";
@@ -426,24 +421,25 @@ export const columns: Column[] = [
   {
     key: "passengers",
     label: "Passengers",
-    getValue: (item: FlightListItem) =>
-      isFlight(item) ? item.passengers : null,
+    getValue: (item: FlightItem) => (isFlight(item) ? item.passengers : null),
+    hiddenByDefault: true,
   },
   {
     key: "fuel",
     label: "Fuel",
-    getValue: (item: FlightListItem) => (isFlight(item) ? item.fuel : null),
-  },
-  {
-    key: "remarks",
-    label: "Remarks",
-    width: "200px",
-    getValue: (item: FlightListItem) => item.remarks,
+    getValue: (item: FlightItem) => (isFlight(item) ? item.fuel : null),
+    hiddenByDefault: true,
   },
   {
     key: "training_description",
     label: "Training Description",
     width: "200px",
-    getValue: (item: FlightListItem) => item.training_description,
+    getValue: (item: FlightItem) => item.training_description,
+  },
+  {
+    key: "remarks",
+    label: "Remarks",
+    width: "200px",
+    getValue: (item: FlightItem) => item.remarks,
   },
 ];
