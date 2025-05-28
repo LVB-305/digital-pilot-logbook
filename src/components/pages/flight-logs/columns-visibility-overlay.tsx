@@ -1,9 +1,8 @@
 import { Label } from "@/components/ui/label";
 import { Overlay } from "@/components/ui/overlay";
 import { Switch } from "@/components/ui/switch";
-import { ColumnKey, columns } from "@/types/flight";
+import { columns } from "@/types/flight";
 import { ArrowUpDown } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface ColumnsVisibilityOverlayProps {
   isOpen: boolean;
@@ -66,6 +65,7 @@ export function ColumnsVisibilityOverlay({
               id={`column-${column.key}`}
               checked={visibleColumns.includes(column.key)}
               onCheckedChange={() => handleToggle(column.key)}
+              className="cursor-pointer"
               // Disable the switch if this is the last visible column
               disabled={
                 visibleColumns.length <= 1 &&

@@ -1,10 +1,5 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { List, Search, Table, Columns } from "lucide-react";
-import { FlightList } from "./list";
-import { FlightTable } from "./table";
 import {
   FlightItem,
   isFlight,
@@ -14,8 +9,13 @@ import {
 import { Aircraft } from "@/types/aircraft";
 import { createClient } from "@/lib/supabase/client/client";
 import { fetchFlightData } from "@/actions/pages/flights/flight";
-import { ViewOptionsOverlay } from "./view-options-overlay";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { List, Search, Table, Columns } from "lucide-react";
+import { FlightList } from "@/components/pages/flight-logs/list";
+import { FlightTable } from "@/components/pages/flight-logs/table";
+import { ViewOptionsOverlay } from "@/components/pages/flight-logs/view-options-overlay";
 
 export default function Flights() {
   const [viewMode, setViewMode] = useState<"list" | "table">("list");

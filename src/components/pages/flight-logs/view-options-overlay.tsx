@@ -1,9 +1,6 @@
 import { Overlay } from "@/components/ui/overlay";
 import { ChevronRight } from "lucide-react";
-import { ColumnsVisibilityOverlay } from "./columns-visibility-overlay";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { columns } from "@/types/flight";
+import { ColumnsVisibilityOverlay } from "@/components/pages/flight-logs/columns-visibility-overlay";
 import { useState } from "react";
 
 interface ViewOptionsOverlayProps {
