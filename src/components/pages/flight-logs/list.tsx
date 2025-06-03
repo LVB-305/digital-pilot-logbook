@@ -117,7 +117,7 @@ export function FlightList({
                               {format(new Date(date), "dd MMM yyyy")}
                             </div>
                             {/* Route or Simulator type */}
-                            <div className="text-black font-bold text-base mt-1">
+                            <div className="text-black font-semibold text-base mt-1">
                               {isSimulatorSession(flight) ? (
                                 <span className="text-black">
                                   {aircraftMap[flight.simulator_id]
@@ -127,7 +127,7 @@ export function FlightList({
                                 <>
                                   {flight.departure_airport_code}{" "}
                                   <span className="inline-block transform translate-y-[-2px] font-extrabold">
-                                    →
+                                    »
                                   </span>{" "}
                                   {flight.destination_airport_code}
                                 </>
@@ -138,11 +138,13 @@ export function FlightList({
                               flight.block_start &&
                               flight.block_end && (
                                 <div className="text-sm text-gray-900 mt-1">
-                                  {flight.block_start.substring(0, 5)}{" "}
+                                  {flight.block_start.substring(0, 5)}
+                                  {"z "}
                                   <span className="inline-block transform translate-y-[-1px]">
                                     -
                                   </span>{" "}
                                   {flight.block_end.substring(0, 5)}
+                                  {"z"}
                                 </div>
                               )}
                           </div>
