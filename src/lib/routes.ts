@@ -64,21 +64,26 @@ export const navigation: NavSection[] = [
         href: "/map",
         icon: Map,
       },
-      {
-        title: "Qualifications",
-        href: "/qualifications",
-        icon: FileBadge,
-      },
+      // {
+      //   title: "Qualifications",
+      //   href: "/qualifications",
+      //   icon: FileBadge,
+      // },
     ],
   },
   {
-    title: "TITLE",
+    title: "Operations",
     items: [
-      {
-        title: "Documentation",
-        href: "/docs",
-        icon: FileText,
-      },
+      // {
+      //   title: "Documentation",
+      //   href: "/docs",
+      //   icon: FileText,
+      // },
+      // {
+      //   title: "Export & Import",
+      //   href: "/docs",
+      //   icon: FileText,
+      // },
       {
         title: "Account",
         href: "/app/settings?tab=account",

@@ -44,13 +44,13 @@ export function PageHeader({
 
   return (
     <>
-      <header className="flex items-center justify-between p-3 border-b">
+      <header className="flex items-center justify-between py-2 px-3 border-b">
         {/* Leading */}
         {isMobile && isTopLevelPage ? (
           <Button
             variant="ghost"
             size="icon"
-            className="text-primary font-medium hover:bg-primary-foreground w-10 h-10"
+            className="text-primary font-medium hover:bg-primary-foreground w-8 h-8"
             onClick={() => setNavOverlayOpen(true)}
           >
             <Menu className="h-6 w-6" />
@@ -59,7 +59,7 @@ export function PageHeader({
           <Button
             variant="ghost"
             size="icon"
-            className="text-primary font-medium hover:bg-primary-foreground w-10 h-10"
+            className="text-primary font-medium hover:bg-primary-foreground w-8 h-8"
             asChild
           >
             <Link href={backHref}>
@@ -67,17 +67,17 @@ export function PageHeader({
             </Link>
           </Button>
         ) : (
-          <div className="w-10" /> /* Spacer when no action button */
+          <div className="w-8" /> /* Spacer when no action button */
         )}
 
         {/* Title */}
-        <h1 className="text-xl font-medium">{title}</h1>
+        <h1 className="text-lg font-medium">{title}</h1>
 
         {/* Trailing */}
         {actionButton ? (
           actionButton
         ) : (
-          <div className="w-10" /> /* Spacer when no action button */
+          <div className="w-8" /> /* Spacer when no action button */
         )}
       </header>
 

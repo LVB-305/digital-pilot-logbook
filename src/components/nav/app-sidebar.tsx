@@ -106,7 +106,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === item.href}
-                      className="cursor-pointer"
+                      className="cursor-pointer font-medium"
+                      size={"lg"}
                     >
                       <a href={item.href}>
                         <item.icon className="h-4 w-4 mr-2" />
