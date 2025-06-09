@@ -116,10 +116,12 @@ export const formatTimeString = (timeStr: string | null) => {
 export const formatLocation = (location: string, runway?: string) => {
   // Handle missing airport with runway
   if (!location && runway) {
-    return `-/${runway}`;
+    return `Select/${runway}`;
   }
   // Only add the runway with separator if runway is provided
-  return runway && runway.trim() ? `${location}/${runway}` : location || "-";
+  return runway && runway.trim()
+    ? `${location}/${runway}`
+    : location || "Select";
 };
 
 export const formatMovement = (day: number, night: number) => {

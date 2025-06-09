@@ -150,7 +150,7 @@ export function FlightList({
                           </div>
                         </div>
 
-                        <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col items-end">
+                        <div className="absolute right-10 top-1/2 -translate-y-1/2 flex flex-col items-end">
                           {/* Right section: Flight time and Registration */}
                           <div className="text-sm text-gray-900">
                             {getDisplayTime(flight)}

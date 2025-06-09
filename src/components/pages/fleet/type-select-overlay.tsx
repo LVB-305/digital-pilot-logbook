@@ -121,6 +121,7 @@ export function TypeSelectDialog({
     setRecentTypes(updatedRecent);
     localStorage.setItem(RECENT_TYPES_KEY, JSON.stringify(updatedRecent));
   };
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
@@ -154,25 +155,25 @@ export function TypeSelectDialog({
     <Overlay
       isOpen={isOpen}
       onClose={onClose}
-      title="Select Type"
+      title="Select Aircraft Type"
       leadingButton={{ label: "Clear", onClick: handleClear, variant: "ghost" }}
       showDoneButton
+      stickyHeader={
+        <div className="relative w-full">
+          <Input
+            type="text"
+            placeholder="Search by model, type, or manufacturer"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="pl-10 rounded-none border-none focus-visible:ring-0"
+            disabled={loading}
+          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        </div>
+      }
     >
-      <div className="relative w-full">
-        <Input
-          type="text"
-          placeholder="Search"
-          value={searchTerm}
-          onChange={handleSearch}
-          className="pl-10 rounded-none border-none focus-visible:ring-0"
-          disabled={loading}
-        />
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-      </div>
-
       <div className="divide-y">
         {loading ? (
-          // ADD SKELETON
           <div className="p-4 space-y-3">
             <Skeleton className="w-full h-12" />
             <Skeleton className="w-full h-12" />
@@ -190,7 +191,6 @@ export function TypeSelectDialog({
           )
         ) : (
           <>
-            {/* Modify in the future to fetch recent types from supabase */}
             {recentTypes.length > 0 && (
               <div>
                 <div className="px-4 py-2 text-sm font-medium text-muted-foreground">

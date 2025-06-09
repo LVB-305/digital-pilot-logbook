@@ -25,6 +25,7 @@ export const CrewSchema = CrewSubmitSchema.extend({
   display_name: z.string(),
 });
 
+export type Crew = z.infer<typeof CrewSubmitSchema>;
 export type CrewItem = z.infer<typeof CrewSchema>;
 
 interface Column {
