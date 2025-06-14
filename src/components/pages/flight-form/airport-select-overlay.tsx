@@ -153,8 +153,6 @@ export function AirportSelectDialog({
   const renderRunways = () => {
     if (!selectedAirport?.runways) return null;
 
-    console.log("Rendering runways for:", selectedAirport.runways);
-
     return (
       <div className="divide-y">
         <div className="px-4 py-2 text-sm font-medium text-muted-foreground">

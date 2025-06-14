@@ -1,9 +1,24 @@
-import {
-  Airport,
-  AirportData,
-  AirportWithVisits,
-  Runway,
-} from "@/schemas/auth/airport";
+import { Airport, Runway } from "@/types/airport";
+
+// Update interface to new structure in types/airport.ts
+
+interface AirportData {
+  metadata: {
+    last_updated: string;
+    total_airports: number;
+    airports_with_runways: number;
+    sources: {
+      airports: string;
+      runways: string;
+    };
+  };
+  airports: Record<string, Airport>;
+}
+
+interface AirportWithVisits extends Airport {
+  visits: number;
+  lastVisit: string | null;
+}
 
 // Cache for the airports data
 let airportsCache: Airport[] | null = null;

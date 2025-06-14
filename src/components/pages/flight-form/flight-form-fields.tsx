@@ -1,5 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { calculateNightTime } from "@/lib/night-time-calculator";
+import { getAirportByIcao } from "@/actions/pages/airports/fetch-airports";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -125,6 +127,72 @@ export function FlightFormFields() {
     setCrewSelectDialogOpen(false);
   };
 
+  // Watch for changes in flight times and airports
+  const flight_start = watch("flight_start");
+  const flight_end = watch("flight_end");
+  const date = watch("date");
+  // Calculate night time when flight details change
+  useEffect(() => {
+    const calculateAndSetNightTime = async () => {
+      // Only calculate if we have all required information
+      if (
+        !flight_start ||
+        !flight_end ||
+        !departure_airport_code ||
+        !destination_airport_code ||
+        !date
+      ) {
+        console.log("Missing required information:", {
+          flight_start,
+          flight_end,
+          departure_airport_code,
+          destination_airport_code,
+          date,
+        });
+        setValue("night_time_minutes", 0);
+        return;
+      }
+      try {
+        const [departureAirport, destinationAirport] = await Promise.all([
+          getAirportByIcao(departure_airport_code),
+          getAirportByIcao(destination_airport_code),
+        ]);
+
+        if (!departureAirport || !destinationAirport) {
+          console.log("Missing airport data, setting night time to 0");
+          setValue("night_time_minutes", 0);
+          return;
+        }
+
+        const flightDate = new Date(date);
+        console.log("Calculating night time for date:", flightDate);
+
+        const nightMinutes = await calculateNightTime(
+          flightDate,
+          flight_start,
+          flight_end,
+          departureAirport,
+          destinationAirport
+        );
+
+        console.log("Night time calculation result:", nightMinutes, "minutes");
+        setValue("night_time_minutes", nightMinutes);
+      } catch (error) {
+        console.error("Error calculating night time:", error);
+        setValue("night_time_minutes", 0);
+      }
+    };
+
+    calculateAndSetNightTime();
+  }, [
+    flight_start,
+    flight_end,
+    departure_airport_code,
+    destination_airport_code,
+    date,
+    setValue,
+  ]);
+
   return (
     <>
       {/* Route Information */}
@@ -219,10 +287,12 @@ export function FlightFormFields() {
           render={({ field }) => (
             <FormItem>
               <PositionedItem position="first" className="p-3">
+                {" "}
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">Block Start</span>
                   <Input
                     {...field}
+                    value={field.value ?? ""}
                     type="time"
                     className="w-24 text-center h-fit py-0 border-none dark:bg-transparent focus-visible:border-none focus-visible:ring-0 shadow-none"
                   />
@@ -238,10 +308,12 @@ export function FlightFormFields() {
           render={({ field }) => (
             <FormItem>
               <PositionedItem position="middle" className="p-3">
+                {" "}
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">Take Off</span>
                   <Input
                     {...field}
+                    value={field.value ?? ""}
                     type="time"
                     className="w-24 text-center h-fit py-0 border-none dark:bg-transparent focus-visible:border-none focus-visible:ring-0 shadow-none"
                   />
@@ -257,10 +329,12 @@ export function FlightFormFields() {
           render={({ field }) => (
             <FormItem>
               <PositionedItem position="middle" className="p-3">
+                {" "}
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">Landing</span>
                   <Input
                     {...field}
+                    value={field.value ?? ""}
                     type="time"
                     className="w-24 text-center h-fit py-0 border-none dark:bg-transparent focus-visible:border-none focus-visible:ring-0 shadow-none"
                   />
@@ -276,10 +350,12 @@ export function FlightFormFields() {
           render={({ field }) => (
             <FormItem>
               <PositionedItem position="last" className="p-3">
+                {" "}
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium">Block End</span>
                   <Input
                     {...field}
+                    value={field.value ?? ""}
                     type="time"
                     className="w-24 text-center h-fit py-0 border-none dark:bg-transparent focus-visible:border-none focus-visible:ring-0 shadow-none"
                   />
@@ -302,7 +378,7 @@ export function FlightFormFields() {
                   <span className="text-sm font-medium">Hobbs Start</span>
                   <Input
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     type="number"
                     placeholder="0.0"
                     step="0.1"
@@ -324,7 +400,7 @@ export function FlightFormFields() {
                   <span className="text-sm font-medium">Hobbs End</span>
                   <Input
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     placeholder="0.0"
                     type="number"
                     step="0.1"
@@ -346,7 +422,7 @@ export function FlightFormFields() {
                   <span className="text-sm font-medium">Tach Start</span>
                   <Input
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     type="number"
                     placeholder="0.0"
                     step="0.1"
@@ -368,7 +444,7 @@ export function FlightFormFields() {
                   <span className="text-sm font-medium">Tach End</span>
                   <Input
                     {...field}
-                    value={field.value || ""}
+                    value={field.value ?? ""}
                     placeholder="0.0"
                     type="number"
                     step="0.1"

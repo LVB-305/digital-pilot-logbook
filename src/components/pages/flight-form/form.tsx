@@ -54,6 +54,10 @@ export default function FlightForm({
 
   const form = useForm<Flight>({
     resolver: zodResolver(FlightSchema),
+    defaultValues: {
+      date: flight?.date || new Date().toISOString().split("T")[0],
+      // Other default values required for the form
+    },
   });
 
   const isEdit = !!flight;
@@ -144,12 +148,10 @@ export default function FlightForm({
                         Date
                       </span>
                       <div className="flex flex-col gap-1">
+                        {" "}
                         <input
                           type="date"
-                          defaultValue={
-                            field.value ||
-                            new Date().toISOString().split("T")[0]
-                          }
+                          {...field}
                           className="text-sm placeholder-muted-foreground"
                         />
                         <FormMessage />
